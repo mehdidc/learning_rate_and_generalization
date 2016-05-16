@@ -22,15 +22,15 @@ def train_and_validate(train, valid, test,
         'learning_rate',
         'learning_rate_decay',
         'momentum',
-         'batchsize',
-         'nb_epochs',
-         'augment',
-         'augment_params',
+        'batchsize',
+        'nb_epochs',
+        'augment',
+        'augment_params',
     ]
     assert set(hp.keys()).issubset(set(valid_hp))
   
     learning_rate = theano.shared(np.array(hp.get('learning_rate', 0.01)).astype(np.float32))
-    momentum = hp.get('momentum', 0.9)
+    momentum = hp.get('momentum', 0)
     batchsize = hp.get('batchsize', 128)
 
     X = T.tensor4()
@@ -85,10 +85,10 @@ def train_and_validate(train, valid, test,
             train_time.append(time() - t)
         stats = OrderedDict()
         stats['train_loss'] = loss_fn(train.X, train.y)
-        stats['valid_losss'] = loss_fn(valid.X, valid.y)
+        stats['valid_loss'] = loss_fn(valid.X, valid.y)
+        stats['test_loss'] = acc_fn(test.X, test.y)
         stats['train_acc'] = acc_fn(train.X, train.y)
         stats['valid_acc'] = acc_fn(valid.X, valid.y)
-        stats['test_loss'] = acc_fn(test.X, test.y)
         stats['test_acc'] = acc_fn(test.X, test.y)
         stats['data_aug_time'] = np.sum(data_aug_time)
         stats['train_time'] = np.sum(train_time)
