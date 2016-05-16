@@ -5,7 +5,7 @@ import numpy as np
 import theano
 import theano.tensor as T
 from lasagne import layers, objectives, updates
-from helpers import iterate_minibatches
+from helpers import iterate_minibatches, minibatcher
 from tabulate import tabulate
 from time import time
 import model
@@ -52,7 +52,11 @@ def train_and_validate(train, valid, test,
     y_acc_detm = T.eq(y_pred_detm.argmax(axis=1), y).mean()
 
     loss_fn = theano.function([X, y], loss_detm)
+    loss_fn = minibatcher(loss_fn, batchsize=1000)
+
     acc_fn = theano.function([X, y], y_acc_detm)
+    acc_fn = minibatcher(acc_fn, batchsize=1000)
+
 
     params = layers.get_all_params(net, trainable=True)
     grad_updates = updates.momentum(loss, params, learning_rate=learning_rate, momentum=momentum)

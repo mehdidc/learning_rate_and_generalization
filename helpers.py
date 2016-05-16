@@ -10,13 +10,20 @@ def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
     if shuffle:
         indices = np.arange(len(inputs))
         np.random.shuffle(indices)
-    for start_idx in range(0, len(inputs) - batchsize + 1, batchsize):
+    for start_idx in range(0, max(len(inputs) - batchsize + 1, len(inputs)), batchsize):
         if shuffle:
             excerpt = indices[start_idx:start_idx + batchsize]
         else:
             excerpt = slice(start_idx, start_idx + batchsize)
         yield inputs[excerpt], targets[excerpt]
 
+def minibatcher(fn, batchsize=1000):
+    def f(X, y):
+        results = []
+        for Xi, yi in iterate_minibatches(X, y, batchsize):
+            results.append(len(Xi) * fn(Xi, yi)) # assumes the result of fn is the average of something
+        return np.sum(results) / len(X)
+    return f
 
 def flip(X, random_state=None, direction='vertical', ratio=0.5):
     if random_state is None:
