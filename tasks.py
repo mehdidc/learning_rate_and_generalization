@@ -65,7 +65,7 @@ def run_job_and_sync_db(j, db):
     db.modify_state_of(j['summary'], RUNNING)
     history = run_job(j['content'])
     db.job_update(j['summary'], {'history': history})
-    db.modify_state_of(j["summary"], FINISHED)
+    db.modify_state_of(j["summary"], SUCCESS)
 
 def run_job(content):
     ct = content
