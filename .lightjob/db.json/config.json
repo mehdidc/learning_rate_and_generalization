@@ -1,1 +1,1 @@
-{"autocommit": false, "serializer_class": "json", "store_class": "transactional", "index_class": "transactional", "indexes": {"job": {"summary": {"id": "c3a24294ace64c858afdb194a135a9d1", "key": "summary"}}}, "index_store_class": "basic", "version": "0.2.12"}
+{"autocommit": false, "serializer_class": "json", "store_class": "transactional", "index_class": "transactional", "indexes": {"job": {"summary": {"id": "b2003c5170de47a6aafc7ff894dde406", "key": "summary"}}}, "index_store_class": "basic", "version": "0.2.12"}

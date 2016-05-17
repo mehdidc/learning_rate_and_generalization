@@ -11,6 +11,8 @@ def insert_jobs():
     db = load_db()
     nb = 0
     nb += insert_jobset(jobset1(), db, where='jobset1')
+    nb += insert_jobset(jobset2(), db, where='jobset2')
+    nb += insert_jobset(jobset3(), db, where='jobset3')
     print('{} jobs added'.format(nb))
 
 def insert_jobset(jobs, db, **kw):
@@ -20,6 +22,7 @@ def insert_jobset(jobs, db, **kw):
     return nb
 
 def jobset1():
+    # with momentum
     jobs = []
     dataset = dict(
         name='mnist',
@@ -38,6 +41,61 @@ def jobset1():
         dataset=dataset,
         seed=42
     )
+    for lr in np.logspace(-6, 1, 100):
+        hp_cur = hp.copy()
+        hp_cur['learning_rate'] = lr
+        content_cur = content.copy()
+        content_cur['hp'] = hp_cur
+        jobs.append(content_cur)
+    return jobs
+
+def jobset2():
+    # same than jobset1 but without momentum
+    jobs = []
+    dataset = dict(
+        name='mnist',
+        training_subset=0.02, valid_subset=0.1, test_subset=0.1
+    )
+    hp = dict(
+        learning_rate_decay=1,
+        momentum=0,
+        batchsize=128,
+        nb_epochs=500,
+        augment=False,
+        augment_params={}
+    )
+    content = dict(
+        model_name='ciresan_4',
+        dataset=dataset,
+        seed=42
+    )
+    for lr in np.logspace(-6, 1, 100):
+        hp_cur = hp.copy()
+        hp_cur['learning_rate'] = lr
+        content_cur = content.copy()
+        content_cur['hp'] = hp_cur
+        jobs.append(content_cur)
+    return jobs
+
+def jobset3():
+    # same than jobset2 but full data
+    jobs = []
+    dataset = dict(
+        name='mnist',
+    )
+    hp = dict(
+        learning_rate_decay=1,
+        momentum=0,
+        batchsize=128,
+        nb_epochs=500,
+        augment=False,
+        augment_params={}
+    )
+    content = dict(
+        model_name='ciresan_4',
+        dataset=dataset,
+        seed=42
+    )
     # no decay, no momentum
     for lr in np.logspace(-6, 1, 100):
         hp_cur = hp.copy()
@@ -46,6 +104,8 @@ def jobset1():
         content_cur['hp'] = hp_cur
         jobs.append(content_cur)
     return jobs
+
+
 
 @task
 def run_jobs(nb=1, where=None):
